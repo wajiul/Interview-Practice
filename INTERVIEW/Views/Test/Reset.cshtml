@@ -1,0 +1,37 @@
+﻿
+<div class="container" id="alertBox" style="width:40%">
+    
+</div>
+<div class="container text-center mt-5">
+    <button class="btn btn-outline-primary" onclick="Confirm('OOP')">OOP</button>
+    <button class="btn btn-outline-primary"  onclick="Confirm('DTS')">Data Structure</button>
+    <button class="btn btn-outline-primary"  onclick="Confirm('ALGO')">Algorithm</button>
+    <button class="btn btn-outline-primary"  onclick="Confirm('OS')">Operating System</button>
+    <button class="btn btn-outline-primary"  onclick="Confirm('NETWORK')">Network</button>
+    <button class="btn btn-outline-primary"  onclick="Confirm('SAMSUNG')">Samsung</button>
+    <button class="btn btn-outline-primary"  onclick="Confirm('CODING')">Coding</button>
+</div>
+
+<script>
+    function Confirm(Course) {
+        document.getElementById("alertBox").style.display = "block";
+        let alertMsg = `
+            <div class="card">
+                <div class="card-header text-center">
+                  <h3>Are you sure you want to reset ${Course}?<h3>
+                </div>
+            <div class="card-body">
+             <a class="btn btn-primary" onclick = "Hide()">No Goback</a>
+             <a class="btn btn-danger" href="/Test/Reset?course=${Course}" onclick = "Hide()">Yes</a>
+            </div>
+          </div>
+        `;
+        document.getElementById("alertBox").innerHTML = alertMsg;
+
+    }
+
+    function Hide() {
+        console.log("hide hide hide");
+        document.getElementById("alertBox").style.display = "none";
+    }
+</script>

@@ -1,0 +1,40 @@
+﻿@model List<QuestionModel>
+<div class="container">
+    <form class="form-inline mt-2" asp-action="ShowQuestion">
+        <input name="Course"/>
+        <input class="ml-2 btn btn-sm btn-primary" type="submit" value="Submit"/>
+    </form>
+    <table class="table table-sm table-bordered table-striped mt-2">
+        <thead>
+            <tr>
+                <th style="width:5%">#</th>
+                <th style="width:15%">Course</th>
+                <th style="width:60%">Question</th>
+                <th style="width:5%">Rank</th>
+                <th style="width:15%">Action</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @{
+                int Counter = 0;
+            }
+            @foreach(var item in Model)
+            {
+                ++Counter;
+
+                <tr>
+                    <td>@Counter</td>
+                    <td>@item.Course</td>
+                    <td>@item.Question</td>
+                    <td><span class="badge badge-warning">@item.Rank</span></td>
+                    <td>
+                        <a class="btn btn-sm btn-primary" asp-action="Edith" asp-route-Id="@item.Id">Edith</a>
+                        <a class="btn btn-sm btn-danger" asp-controller="Test" asp-action="Delete" asp-route-Question="@item.Question" asp-route-Course="@item.Course">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

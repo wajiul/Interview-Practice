@@ -1,0 +1,164 @@
+﻿@model List<QuestionModel>
+
+    
+
+
+  <div id="Result" style="width:40%; margin: 10px auto;display:none;">
+      <div class="card">
+          <div class="card-header">
+              <h3>Result</h3>
+          </div>
+          <div class="card-body">
+              <p><button class="btn btn-sm btn-success">Correct :</button> <button id="correct" class="btn btn-sm btn-secondary">0</button></p>
+              <p><button class="btn btn-sm btn-warning mr-2">Partial :</button> <button id="partial" class="btn btn-sm btn-secondary">0</button></p>
+              <p><button class="btn btn-sm btn-danger">Skipped :</button> <button id="skipped" class="btn btn-sm btn-secondary">0</button></p>
+
+          </div>
+          <div class="card-footer">
+              <a class="btn btn-primary" asp-controller="Test" asp-action="TestList">Close</a>
+          </div>
+      </div>
+
+  </div>
+
+
+
+    <div class="container text-center justify-content-center" id="Question">
+        <div class="row py-4">
+            <div class="col-12">
+                <div class="card border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="card-title mb-0 mt-0" id="timer">30:00</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text" id="string-display" style="font-size: 22px; font-weight: bold; letter-spacing: 1px;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <button class="btn btn-danger" onclick="Skip()">Skip</button>
+                <button class="btn btn-warning" onclick="Average()">Average</button>
+                <button class="btn btn-success" onclick="Next()">Next</button>
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="col-12">
+                <br /><br />
+                <button class="btn btn-primary mt-5" onclick="showModal()">Finish Test</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script>
+        var currentIndex = 0;
+        let correct = 0, partial = 0, skipped = 0;
+        let Elapsed = 0;
+
+    var stringList = @Html.Raw(Json.Serialize(Model));
+    console.log(stringList);
+    function Show() {
+        if (currentIndex >= stringList.length) {
+            UpdateToDatabase();
+            currentIndex = 0;
+            showModal();
+
+            return;
+        }
+
+        var stringDisplay = document.getElementById("string-display");
+        console.log(stringList[0]);
+        let currentQuestion = stringList[currentIndex]["question"];
+        if (currentQuestion.startsWith("http")) {
+            stringDisplay.innerHTML = 'Solve the problem: ' + `<a href="${currentQuestion}" target="blank">Samsung coding test: ${currentIndex + 1}</a>`;
+        } else {
+            stringDisplay.innerHTML = currentQuestion;
+        }
+        @*http://leetcode.com/problems/trapping-rain-water/submissions/875917516/*@
+
+    }
+    function Next() {
+        stringList[currentIndex]["rank"] -= 1;
+        currentIndex++;
+        correct++;
+        Show();
+    }
+    function Skip() {
+        stringList[currentIndex]["rank"] += 2;
+        currentIndex++;
+        skipped++;
+        Show();
+    }
+    function Average() {
+        stringList[currentIndex]["rank"] += 1;
+        currentIndex++;
+        partial++;
+        Show();
+    }
+
+    function UpdateToDatabase() {
+        console.log("update to database");
+        console.log(stringList);
+        let data = JSON.stringify(stringList);
+        console.log(data);
+
+
+        $.post("Test/PostQuestion", { "questions": `${data}` }, function (data) {
+            let op_msg = "Successful";
+            if (data.status == false) {
+                op_msg = "Failed";
+            }
+        });
+    }
+
+      function startStopwatch() {
+        var timer = 30 * 60; // Set the initial timer value to 30 minutes in seconds
+        var countdown = setInterval(function () {
+            var minutes = Math.floor(timer / 60);
+            var seconds = timer % 60;
+            Elapsed++;
+            var timeString = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`; // Format the time as MM:SS
+            document.getElementById("timer").innerHTML = timeString; // Display the time in the HTML element with ID "timer"
+            if (--timer < 0) {
+                clearInterval(countdown); // Stop the countdown when it reaches 0
+                document.getElementById("timer").innerHTML = "Time's up!"; // Display a message when the countdown finishes
+                // Add any code you want to run when the countdown finishes
+                showModal();
+                return;
+            }
+        }, 1000); // Run the countdown every second (1000 milliseconds)
+    }
+
+        function showModal() {
+            UpdateToDatabase();
+            let elapsedMinute = Math.floor(Elapsed / 60);
+            let currentCourse = stringList[0]["course"];
+            if (elapsedMinute >= 5) {
+                AddThisTestToCount(currentCourse);
+            }
+
+            let result = document.getElementById('Result');
+            result.style.display = "block";
+            document.getElementById("correct").innerHTML = correct;
+            document.getElementById("partial").innerHTML = partial;
+            document.getElementById("skipped").innerHTML = skipped;
+            document.getElementById("Question").style.display = "none";
+        }
+
+        function AddThisTestToCount(currentCourse) {
+            $.post("Test/CountTest", { currentCourse }, function (data) {
+                let op_msg = "Successful";
+                if (data.status == false) {
+                    op_msg = "Failed";
+                }
+            });
+        }
+         Show();
+        startStopwatch();
+
+
+    </script>

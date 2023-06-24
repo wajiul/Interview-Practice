@@ -1,0 +1,41 @@
+﻿@model INTERVIEW.Models.NewQuestion
+
+@{
+    ViewData["Title"] = "AddQuestions";
+}
+
+<h1>AddQuestions</h1>
+
+<h4>NewQuestionList</h4>
+<hr />
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-12">
+            <form asp-action="AddQuestions">
+                <select name="Course" class="form-control">
+                    <option value="OOP">OOP</option>
+                    <option value="DTS">DATASTRUCTURE</option>
+                    <option value="ALGO">ALGORITHM</option>
+                    <option value="DATABASE">DATABASE</option>
+                    <option value="OS">OS</option>
+                    <option value="NETWORK">NETWORKING</option>
+                    <option value="SAMSUNG">SAMSUNG</option>
+                    <option value="CODING">CODING</option>
+                    <option value="LINKEDLIST">LINKEDLIST</option>
+                    <option value="Dp">Dp</option>
+
+
+                </select>
+                <textarea class="form-control mt-3" name="QList" style="min-height:400px;"></textarea>
+                <div class="form-group mt-3"> 
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
